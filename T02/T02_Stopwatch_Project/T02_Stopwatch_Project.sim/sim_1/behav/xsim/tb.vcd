@@ -1,0 +1,46 @@
+$date
+   Thu Mar 27 17:43:39 2025
+$end
+
+$version
+  2023.2
+  $dumpfile ("tb.vcd") 
+$end
+
+$timescale
+  1ps
+$end
+
+$scope module tb $end
+$var reg 2 ! sw [1:0] $end
+$var wire 8 " led [7:0] $end
+$scope module uut $end
+$var wire 2 # sw [1:0] $end
+$var wire 8 " led [7:0] $end
+$var reg 1 $ xilinx_isim_temp_0_ln29_assignTransform $end
+$var reg 1 % xilinx_isim_temp_1_ln29_assignTransform $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+
+#0
+$dumpvars
+b0 !
+b10110011 "
+b0 #
+0$
+0%
+$end
+
+#2000
+b1 !
+b1101010 "
+b1 #
+1$
+
+#4000
+b10 !
+b1101001 "
+b10 #
+0$
+1%
