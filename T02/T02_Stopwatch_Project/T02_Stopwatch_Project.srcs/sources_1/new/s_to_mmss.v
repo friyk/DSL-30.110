@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 06.03.2025 12:19:44
+// Create Date: 31.03.2025 16:48:54
 // Design Name: 
-// Module Name: top_module
+// Module Name: s_to_mmss
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -19,14 +19,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module top_module(
-    input clk,          // 100MHz master clock
-    input btnC,         // centre button, used for start/stop
-    input btnU,         // up button, used for reset
-    
-    output [6:0]seg,    // 7 segment display
-    output dp,          // 7 segment display decimal point
-    output [3:0]an      // 7 segment anode
-    );
 
+module s_to_mmss(
+    input [31:0] s,
+    input [31:0] mm,
+    input [31:0] ss
+    );
 endmodule

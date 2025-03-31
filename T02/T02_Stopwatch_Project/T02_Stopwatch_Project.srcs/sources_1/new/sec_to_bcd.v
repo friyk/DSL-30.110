@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 06.03.2025 12:19:44
+// Create Date: 31.03.2025 16:51:13
 // Design Name: 
-// Module Name: top_module
+// Module Name: sec_to_bcd
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -19,14 +19,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module top_module(
-    input clk,          // 100MHz master clock
-    input btnC,         // centre button, used for start/stop
-    input btnU,         // up button, used for reset
-    
-    output [6:0]seg,    // 7 segment display
-    output dp,          // 7 segment display decimal point
-    output [3:0]an      // 7 segment anode
-    );
 
+module sec_to_bcd(
+    input [31:0] ss,
+    output [3:0] bcd
+    );
 endmodule
