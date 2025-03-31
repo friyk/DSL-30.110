@@ -30,16 +30,20 @@ module debounce (
     reg button_prev;        // Previous state of the button
 
     always @(posedge clk or posedge reset) begin
+        // Reset counter and button statuses if reset pin asserted
         if (reset) begin
             count <= 20'b0;
             button_prev <= 1'b0;
             button_out <= 1'b0;
         end else begin
             button_prev <= button_in;
+            // Set counter to 0 when button state changes
             if (button_prev != button_in) begin
                 count <= 20'b0;
-            end else if (count == 20'hFFFFF) begin
+            // If counter hits maximum, set button output to previous button state
+            end else if (count == 20'h0000F) begin
                 button_out <= button_prev;
+            // Increment counter
             end else begin
                 count <= count + 1;
             end
