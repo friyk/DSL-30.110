@@ -34,10 +34,10 @@ reg [7:0] segment_r;
 reg [3:0] cur_num_r;
 reg [3:0] an_r;
 
-assign an_o = ~an_r;       // Common anode inversion
-assign seg_o = segment_r;  // Direct segment output
+assign an_o = ~an_r;       // Anode outputs are inverted
+assign seg_o = segment_r;  // Segment outputs are not inverted
 
-// Anode rotation logic
+// Anode rotation logic, upon every CLK the anode has to be rotated to the next digit
 always @(negedge rstn_i, posedge clk_500hz) begin
     if (!rstn_i) an_r <= 4'b0000;
     else case (an_r)
@@ -48,7 +48,7 @@ always @(negedge rstn_i, posedge clk_500hz) begin
     endcase
 end
 
-// Direct input digit selection
+// Mux to wire up the correct digit segments based on the current anode
 always @(*) begin
     case (an_r)
         4'b0001: cur_num_r = num0_i;  // DIG4 (LSB)
@@ -59,7 +59,7 @@ always @(*) begin
     endcase
 end
 
-// 7-segment decoder
+// Decode number into 7-segment codes
 always @(*) begin
     case (cur_num_r)
         4'h0: segment_r = 8'hC0;  // 0
