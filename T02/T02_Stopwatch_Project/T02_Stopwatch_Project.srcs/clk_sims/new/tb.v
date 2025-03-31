@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 31.03.2025 15:03:16
+// Create Date: 31.03.2025 21:57:10
 // Design Name: 
-// Module Name: debounce_tb
+// Module Name: tb
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -19,16 +19,16 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+
 module tb;
     // Inputs
     reg clk;
     reg reset;
-    reg button_in;
     
     // Outputs
-    wire button_out;
+    wire clk_out;
 
-    debounce dut(clk, reset, button_in, button_out);
+    clk_100M_to_1k dut(clk, reset, clk_out);
     
     // Clock generation
 always begin
@@ -43,15 +43,10 @@ initial begin
     // Initialise signals at start of simulation
     clk = 0;
     reset = 0;
-    button_in = 0;
     
     // Simulation
     #1 reset = 1;
     #5 reset = 0;
-    #1 button_in = 1;
-    #15 button_in = 0;
-    #4 button_in = 1;
-    #64 button_in = 0;
     #128 $finish;
 
     $dumpoff;

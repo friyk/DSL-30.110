@@ -19,6 +19,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+// Refer to this link https://web.archive.org/web/20180517023231/http://www.hackersdelight.org/divcMore.pdf
+// For how to do a divide by 1000! Although it's in C, it avoids using any complex operations like multiply and divide
 
 module ms_to_s(
     input [31:0]ms,
