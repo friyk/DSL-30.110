@@ -27,45 +27,72 @@ module s_to_mmss(
     );
     
     // We use simple primary school style division, keep subtracting until we cannot subtract anymore and we get our quotient and remainder :)
-    reg state;
-    reg [31:0]in_buf; // Input buffer. Only takes in s upon state 1
-    reg [31:0]quotient;
-    reg [31:0]remainder;
-    reg [31:0]temp;
+    reg [2:0]state;
+    reg signed [31:0]quotient;
+    reg signed [31:0]remainder;
+    reg signed [31:0]temp;
     
+    initial quotient = 0;
+    initial remainder = 0;
     initial state = 0;
+    initial temp = 0;
     initial mm = 0;
     initial ss = 0;
     
+    
     always @(posedge clk) begin
+        // Load from inputs
         if (state == 0) begin
-            // Preserve minutes and seconds registers, do not change their values
-            mm <= mm;
-            ss <= ss;
-            
-            remainder <= temp; // Save the remainder, just in case this subtraction yields a negative number
-            temp <= temp - 60; // Perform division by subtracting 60 repeatedly
-            
-            // if this subtraction operation will result in a negative number, discard the result and transition to state 1
-            if (temp < 0) begin
-                quotient <= quotient;
-                state <= 1;
-            end else begin
-                // If we were able to subtract by 60, save quotient
-                quotient <= temp;
-                state <= state;
-            end
-        end else if (state == 1) begin
             // Load seconds into the temp register
             temp <= s;
             
-            // Load quotient and remainder into minutes and seconds registers
+            // Reset quotient and remainders
+            quotient <= 0;
+            remainder <= 0;
+            
+            // Preserve output register values
+            mm <= mm;
+            ss <= ss;
+            
+            // Transition to state 0 (calculating state 1)
+            state <= 1;
+        end
+        
+        else if (state == 1) begin
+            // Save temp to register, before trying to calculate quotient
+            remainder <= temp;
+            
+            state <= 2;
+        end
+        
+        else if (state == 2) begin
+            temp <= temp - 60; // Perform division by subtracting 60 repeatedly
+            
+            state <= 3;
+        end
+        
+        else if (state == 3) begin
+            if (temp < 0) begin
+                // Ignore the result, we've reached minimum, preserve quotient and save results to output regs
+                quotient <= quotient;
+                remainder <= remainder;
+                state <= 4;
+            end else begin
+                // Continue subtracting
+                quotient <= quotient + 1;
+                remainder <= remainder;
+                state <= 1;
+            end
+        end
+        
+        // Save data, and go back to the beginning
+        else begin
             mm <= quotient;
             ss <= remainder;
-            
-            // Transition back to state 0 (calculating state)
+        
             state <= 0;
         end
+    
     end
     
 endmodule

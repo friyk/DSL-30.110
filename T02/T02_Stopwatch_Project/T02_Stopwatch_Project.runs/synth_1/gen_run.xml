@@ -3,8 +3,8 @@
   <File Type="PA-TCL" Name="logic_gate.tcl"/>
   <File Type="REPORTS-TCL" Name="logic_gate_reports.tcl"/>
   <File Type="RDS-RDS" Name="logic_gate.vds"/>
-  <File Type="RDS-UTIL" Name="debounce_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="debounce_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="ssd_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="ssd_utilization_synth.pb"/>
   <File Type="RDS-DCP" Name="logic_gate.dcp"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
     <Filter Type="Srcs"/>
