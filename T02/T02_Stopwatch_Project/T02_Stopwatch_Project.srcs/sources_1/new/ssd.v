@@ -82,8 +82,7 @@ endmodule
 // Provides a 500Hz resettable clock from the 100MHz system clock by decimal division
 module clk_500hz(
     output reg clk_out,
-    input clk_in,
-    reset
+    input clk_in, reset
 );
     reg[17:0]count;
 
