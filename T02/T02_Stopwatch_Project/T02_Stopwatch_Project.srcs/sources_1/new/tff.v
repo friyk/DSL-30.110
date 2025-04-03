@@ -23,7 +23,15 @@
 
 
 module tff(
-    input in,
-    output out
+    input clk,
+    input t,
+    output reg q
     );
+    
+    initial q = 0;
+    
+    always @ (posedge clk) begin
+        q <= (t ? ~q : q);
+    end
+    
 endmodule
