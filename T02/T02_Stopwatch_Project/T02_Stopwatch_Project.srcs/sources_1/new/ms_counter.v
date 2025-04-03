@@ -29,7 +29,7 @@ module ms_counter(
     initial out = 0;
     
     // Synchronous reset
-    always @(posedge clk) begin
+    always @(posedge clk or posedge rst) begin
         if (rst)
             out <= 0;
         else

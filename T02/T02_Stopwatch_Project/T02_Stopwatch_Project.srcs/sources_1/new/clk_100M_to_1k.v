@@ -36,7 +36,7 @@ module clk_100M_to_1k(
             clk_1k <= 0;
         end
         else begin
-            if (counter == 17'h186A0) begin // For actual, h186A0 = d100000, after this number of clock cycles the 1kHz clock advances
+            if (counter == 17'd50000) begin // For actual d100000/2=d50000, after this number of clock cycles the 1kHz clock transitions
 //            if (counter == 17'd9) begin // For testbench purposes
                 counter <= 0;
                 clk_1k <= ~clk_1k;

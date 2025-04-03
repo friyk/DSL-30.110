@@ -34,6 +34,9 @@ reg [7:0] segment_r;
 reg [3:0] cur_num_r;
 reg [3:0] an_r;
 
+initial an_r = 0;
+initial segment_r = 0;
+
 assign an_o = ~an_r;       // Anode outputs are inverted
 assign seg_o = segment_r;  // Segment outputs are not inverted
 

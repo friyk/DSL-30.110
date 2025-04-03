@@ -26,9 +26,7 @@ module sec_to_bcd(
     output [3:0] bcd_1      // Tens place (0–5)
 );
 
-    wire [7:0] value = ss[7:0];  // Use only the lower 8 bits
-
-    assign bcd_1 = value / 10;   // Tens digit
-    assign bcd_0 = value % 10;   // Ones digit
+    assign bcd_1 = ss / 10;   // Tens digit
+    assign bcd_0 = ss % 10;   // Ones digit
 
 endmodule

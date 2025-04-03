@@ -24,7 +24,7 @@
 
 module ms_to_s(
     input [32:0]ms,
-    output [16:0]s
+    output [15:0]s
     );
     
     assign s = ms / 1000;
