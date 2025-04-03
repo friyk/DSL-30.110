@@ -23,7 +23,10 @@
 // For how to do a divide by 1000! Although it's in C, it avoids using any complex operations like multiply and divide
 
 module ms_to_s(
-    input [31:0]ms,
-    output [31:0]s
+    input [32:0]ms,
+    output [16:0]s
     );
+    
+    assign s = ms / 1000;
+    
 endmodule

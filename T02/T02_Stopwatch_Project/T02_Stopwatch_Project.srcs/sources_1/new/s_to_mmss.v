@@ -20,17 +20,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module s_to_mmss(
-    input [31:0] s,
+    input [16:0] s,
     input clk,          // This device relies on the master 100MHz clock to perform simple division
-    output reg [31:0] mm,
-    output reg [31:0] ss
+    output reg [16:0] mm,
+    output reg [16:0] ss
     );
     
     // We use simple primary school style division, keep subtracting until we cannot subtract anymore and we get our quotient and remainder :)
     reg [2:0]state;
-    reg signed [31:0]quotient;
-    reg signed [31:0]remainder;
-    reg signed [31:0]temp;
+    reg signed [16:0]quotient;
+    reg signed [16:0]remainder;
+    reg signed [16:0]temp;
     
     initial quotient = 0;
     initial remainder = 0;
