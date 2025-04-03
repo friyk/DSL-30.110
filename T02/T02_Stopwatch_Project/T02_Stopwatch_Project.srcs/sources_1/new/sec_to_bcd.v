@@ -21,7 +21,14 @@
 
 
 module sec_to_bcd(
-    input [31:0] ss,
-    output [3:0] bcd
-    );
+    input  [15:0] ss,       // seconds (0–59)
+    output [3:0] bcd_0,     // Ones place (0–9)
+    output [3:0] bcd_1      // Tens place (0–5)
+);
+
+    wire [7:0] value = ss[7:0];  // Use only the lower 8 bits
+
+    assign bcd_1 = value / 10;   // Tens digit
+    assign bcd_0 = value % 10;   // Ones digit
+
 endmodule
