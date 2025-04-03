@@ -25,7 +25,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/sammy/VivadoProjects/project_1/project_1.runs/impl_1'
+HD_PWD='C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.runs/impl_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
@@ -43,6 +43,6 @@ EAStep()
 
 # pre-commands:
 /bin/touch .init_design.begin.rst
-EAStep vivado -log logic_gate.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source logic_gate.tcl -notrace
+EAStep vivado -log top_module.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source top_module.tcl -notrace
 
 

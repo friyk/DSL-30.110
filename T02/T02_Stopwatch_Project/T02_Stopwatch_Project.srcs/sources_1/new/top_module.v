@@ -42,13 +42,31 @@ module top_module(
     wire clock_stopper_mux;
     tff(clk500hz, startstop_btn, clock_stopper_mux);
     
-    // Seven segment display
-    wire [3:0] minute_1, minute_2, second_1, second_2;
-    ssd(1, clk500hz, minute_1, minute_2, second_1, second_2, an, seg);
+    
     
     // Master clock to 1kHz downconverter, and multiplexor to switch it
     wire clk1khz, clk1khz_switched;
     clk_100M_to_1k(clk, 0, clk1khz);
     assign clk1khz_switched = clock_stopper_mux ? 0 : clk1khz;
+    
+    // Master miliseconds counter
+    wire [31:0] miliseconds;
+    ms_counter(0, clk1khz_switched, miliseconds);
+    
+    // Divide ms to s
+    wire [15:0] seconds;
+    ms_to_s(miliseconds, seconds);
+    
+    // Separate seconds into minutes and seconds
+    wire [15:0] mm, ss;
+    s_to_mmss(seconds, clk, mm, ss);
+    
+    // Convert mm and ss into BCD
+    wire [3:0] minute_tens, minute_ones, second_tens, second_ones;
+    min_to_bcd(mm, minute_ones, minute_tens);
+    sec_to_bcd(ss, second_ones, second_tens);
+    
+    // Seven segment display
+    ssd(1, clk500hz, minute_tens, minute_ones, second_tens, second_ones, an, seg);
 
 endmodule

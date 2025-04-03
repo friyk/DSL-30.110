@@ -4,7 +4,7 @@
 
 set TIME_start [clock seconds] 
 namespace eval ::optrace {
-  variable script "C:/Users/sammy/VivadoProjects/project_1/project_1.runs/synth_1/logic_gate.tcl"
+  variable script "C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.runs/synth_1/top_module.tcl"
   variable category "vivado_synth"
 }
 
@@ -76,17 +76,28 @@ create_project -in_memory -part xc7a35tcpg236-1
 set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
-set_property webtalk.parent_dir C:/Users/sammy/VivadoProjects/project_1/project_1.cache/wt [current_project]
-set_property parent.project_path C:/Users/sammy/VivadoProjects/project_1/project_1.xpr [current_project]
+set_property webtalk.parent_dir C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.cache/wt [current_project]
+set_property parent.project_path C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.xpr [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
 set_property board_part_repo_paths {C:/Users/sammy/AppData/Roaming/Xilinx/Vivado/2023.2/xhub/board_store/xilinx_board_store} [current_project]
 set_property board_part digilentinc.com:basys3:part0:1.2 [current_project]
-set_property ip_output_repo c:/Users/sammy/VivadoProjects/project_1/project_1.cache/ip [current_project]
+set_property ip_output_repo c:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
-read_verilog -library xil_defaultlib C:/Users/sammy/VivadoProjects/project_1/project_1.srcs/sources_1/new/top_module.v
+read_verilog -library xil_defaultlib {
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/clk_100M_to_1k.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/debounce.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/min_to_bcd.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/ms_counter.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/ms_to_s.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/s_to_mmss.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/sec_to_bcd.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/ssd.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/tff.v
+  C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/sources_1/new/top_module.v
+}
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
 # stitched into the results of this synthesis run. Any black boxes in the
@@ -96,14 +107,16 @@ OPTRACE "Adding files" END { }
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
-read_xdc C:/Users/sammy/VivadoProjects/project_1/project_1.srcs/constrs_1/new/basys_constraints.xdc
-set_property used_in_implementation false [get_files C:/Users/sammy/VivadoProjects/project_1/project_1.srcs/constrs_1/new/basys_constraints.xdc]
+read_xdc C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/constrs_1/new/basys_constraints.xdc
+set_property used_in_implementation false [get_files C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/constrs_1/new/basys_constraints.xdc]
 
 set_param ips.enableIPCacheLiteLoad 1
+
+read_checkpoint -auto_incremental -incremental C:/Users/sammy/Documents/DSL/DSL-30.110/T02/T02_Stopwatch_Project/T02_Stopwatch_Project.srcs/utils_1/imports/synth_1/logic_gate.dcp
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }
-synth_design -top logic_gate -part xc7a35tcpg236-1
+synth_design -top top_module -part xc7a35tcpg236-1
 OPTRACE "synth_design" END { }
 if { [get_msg_config -count -severity {CRITICAL WARNING}] > 0 } {
  send_msg_id runtcl-6 info "Synthesis results are not added to the cache due to CRITICAL_WARNING"
@@ -113,10 +126,10 @@ if { [get_msg_config -count -severity {CRITICAL WARNING}] > 0 } {
 OPTRACE "write_checkpoint" START { CHECKPOINT }
 # disable binary constraint mode for synth run checkpoints
 set_param constraints.enableBinaryConstraints false
-write_checkpoint -force -noxdef logic_gate.dcp
+write_checkpoint -force -noxdef top_module.dcp
 OPTRACE "write_checkpoint" END { }
 OPTRACE "synth reports" START { REPORT }
-create_report "synth_1_synth_report_utilization_0" "report_utilization -file logic_gate_utilization_synth.rpt -pb logic_gate_utilization_synth.pb"
+create_report "synth_1_synth_report_utilization_0" "report_utilization -file top_module_utilization_synth.rpt -pb top_module_utilization_synth.pb"
 OPTRACE "synth reports" END { }
 file delete __synthesis_is_running__
 close [open __synthesis_is_complete__ w]
