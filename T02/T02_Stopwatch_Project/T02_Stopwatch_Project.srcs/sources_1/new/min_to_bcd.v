@@ -21,7 +21,12 @@
 
 
 module min_to_bcd(
-    input [31:0] mm,
-    output [3:0] bcd
-    );
+    input  [15:0] mm,
+    output [3:0] bcd_0,
+    output [3:0] bcd_1
+);
+
+    assign bcd_0 = mm % 10;    // Ones place
+    assign bcd_1 = mm / 10;    // Tens place
+
 endmodule
