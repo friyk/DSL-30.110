@@ -29,7 +29,7 @@ module fastclk(
     output reg [7:0]counterHold
     );
 
-always @(posedge sysclk or posedge rst) begin
+always @(negedge sysclk or posedge rst) begin
     if (rst) begin    
         counter <= 8'b0000000;
         counterHold <= 8'b00000000;   
@@ -38,10 +38,10 @@ always @(posedge sysclk or posedge rst) begin
     else if (~pio1)
         counter <= counter + 1'b1;
         
-    else if (pio1)
+    else if (pio1) begin
         counterHold = counter;
         counter = 8'b00000000;
-        
+    end
 end            
    
 

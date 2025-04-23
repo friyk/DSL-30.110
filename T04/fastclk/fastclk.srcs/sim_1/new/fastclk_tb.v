@@ -38,7 +38,7 @@ end
 
 initial begin
     reset = 1;
-    clk = 0;
+    clk = 1;
     gpio = 0;
     
     #1 reset = 0;
