@@ -22,7 +22,7 @@
 --           not be asserted unless READY is high.
 --    DATA - The parallel data to be sent. Must be valid the clock cycle
 --           that SEND has gone high.
---    CLK  - A 100 MHz clock is expected
+--    CLK  - A 12 MHz clock is expected for the CMod A7-35T board
 --   READY - This signal goes low once a send operation has begun and
 --           remains low until it has completed and the module is ready to
 --           send another byte.
@@ -51,7 +51,9 @@ architecture Behavioral of UART_TX_CTRL is
 
 type TX_STATE_TYPE is (RDY, LOAD_BIT, SEND_BIT);
 
-constant BIT_TMR_MAX : std_logic_vector(13 downto 0) := "10100010110000"; --10416 = (round(100MHz / 9600)) - 1
+--constant BIT_TMR_MAX : std_logic_vector(13 downto 0) := "10100010110000"; --10416 = (round(100MHz / 9600)) - 1
+--constant BIT_TMR_MAX : std_logic_vector(10 downto 0) := "10011100001"; --1249 = (round(12MHz / 9600)) - 1
+constant BIT_TMR_MAX : std_logic_vector(6 downto 0) := "1100111"; --103 = (round(12MHz / 115200)) - 1
 constant BIT_INDEX_MAX : natural := 10;
 
 --Counter that keeps track of the number of clock cycles the current bit has been held stable over the
