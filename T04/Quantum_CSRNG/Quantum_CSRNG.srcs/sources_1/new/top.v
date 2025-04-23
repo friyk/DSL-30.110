@@ -24,6 +24,8 @@
 module top (
     // 12MHz System Clock
     input wire clk,
+    // Geiger counter digital input
+    input wire pio1,
     // UART TX
     output wire tx,
     // 2 Buttons, BTN0 for reset
@@ -41,23 +43,43 @@ module top (
         .dout(db_btn)
     );
     
-    // ===================== neoTRNG module =====================
-    wire valid_neotrng_output;
-    wire [7:0] neotrng_data_wire;
-    reg [7:0] neotrng_data;
-    neoTRNG neotrng (
+    // ===================== neoTRNG modules =====================
+    wire [1:0] valid_neotrng_output;
+    wire [23:0] neotrng_data_wire;
+    reg [23:0] neotrng_data;
+    neoTRNG neotrng1 (
         .clk_i(clk),
         .rstn_i(~db_btn[0]),
         .enable_i(1),
-        .valid_o(valid_neotrng_output),
-        .data_o(neotrng_data_wire)
+        .valid_o(valid_neotrng_output[0]),
+        .data_o(neotrng_data_wire[7:0])
+    );
+    neoTRNG neotrng2 (
+        .clk_i(clk),
+        .rstn_i(~db_btn[0]),
+        .enable_i(1),
+        .valid_o(valid_neotrng_output[1]),
+        .data_o(neotrng_data_wire[15:8])
+    );
+    neoTRNG neotrng3 (
+        .clk_i(clk),
+        .rstn_i(~db_btn[0]),
+        .enable_i(1),
+        .valid_o(valid_neotrng_output[2]),
+        .data_o(neotrng_data_wire[23:16])
     );
     
-    always @(posedge clk or negedge valid_neotrng_output) begin
-       if (~valid_neotrng_output)
-          neotrng_data <= neotrng_data;      //hold data if invalid
-       else
-          neotrng_data <= neotrng_data_wire; //set data if valid
+    always @(posedge clk) begin
+        //set data if valid
+        if (valid_neotrng_output[0])
+            neotrng_data[7:0] <= neotrng_data_wire[7:0];
+        else if (valid_neotrng_output[1])
+            neotrng_data[15:8] <= neotrng_data_wire[15:8];
+        else if (valid_neotrng_output[2])
+            neotrng_data[15:8] <= neotrng_data_wire[23:16];
+        //hold data if invalid
+        else
+            neotrng_data <= neotrng_data;
     end
     
     
@@ -81,9 +103,9 @@ module top (
             uart_data <= 8'h20;
         // UART is ready, send next character
         end else begin
-            if (valid_neotrng_output) begin
+            if (valid_neotrng_output[0]) begin
                 uart_send <= 1;
-                uart_data <= neotrng_data;
+                uart_data <= neotrng_data[7:0];
             end else begin
                 uart_send <= 0;
                 uart_data <= 8'h20;
