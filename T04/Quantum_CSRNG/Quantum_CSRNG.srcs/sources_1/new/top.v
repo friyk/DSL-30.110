@@ -28,11 +28,18 @@ module top (
     input wire pio1,
     // UART TX
     output wire tx,
+    // Debug RGB LED
+    output wire led0_b,
+    output reg led0_g,
+    output wire led0_r,
     // 2 Buttons, BTN0 for reset
     input wire [1:0] btn
 );
-    // ===================== Button Debouncer =====================
+    initial led0_g = 0;
+
+    // ===================== Unified Reset Signal =====================
     wire [1:0] db_btn;
+    wire reset_n; // Active LOW reset
     debouncer #(
         .WIDTH(2),
         .CLOCKS(1024),
@@ -42,6 +49,28 @@ module top (
         .din(btn),
         .dout(db_btn)
     );
+    assign reset_n = ~db_btn[0];
+    
+    // ===================== FIFO =====================
+    // For now, this FIFO simply caches the data coming 
+    // from the neoTRNG and outputs it to serial
+    // so serial will always try to empty this FIFO
+    /*reg fifo_we = 0;            // Write enable
+    reg fifo_re = 0;            // Read enable
+    wire [7:0] fifo_in;
+    wire [7:0] fifo_out;
+    serial_fifo serial_fifo(
+        .clk(clk),
+        .rst(~reset_n),
+        // Write related pin
+        .full(led0_r),          // indicate FIFO full warning on red LED
+        .din(fifo_in),
+        .wr_en(fifo_we),
+        // Read related pins
+        .empty(led0_b),         // indicate FIFO empty warning on blue LED
+        .dout(fifo_out),
+        .rd_en(fifo_re)
+    );*/
     
     // ===================== neoTRNG modules =====================
     wire [1:0] valid_neotrng_output;
@@ -49,37 +78,54 @@ module top (
     reg [23:0] neotrng_data;
     neoTRNG neotrng1 (
         .clk_i(clk),
-        .rstn_i(~db_btn[0]),
+        .rstn_i(reset_n),
         .enable_i(1),
         .valid_o(valid_neotrng_output[0]),
         .data_o(neotrng_data_wire[7:0])
     );
     neoTRNG neotrng2 (
         .clk_i(clk),
-        .rstn_i(~db_btn[0]),
+        .rstn_i(reset_n),
         .enable_i(1),
         .valid_o(valid_neotrng_output[1]),
         .data_o(neotrng_data_wire[15:8])
     );
     neoTRNG neotrng3 (
         .clk_i(clk),
-        .rstn_i(~db_btn[0]),
+        .rstn_i(reset_n),
         .enable_i(1),
         .valid_o(valid_neotrng_output[2]),
         .data_o(neotrng_data_wire[23:16])
     );
     
+    // ===================== Blake2s hash algorithm core =====================
+    
+//    wire blake_init;
+//    wire blake_update;
+//    wire blake_finish;
+    
+//    blake2s_core blakecore(
+//        .clk(clk),
+//        .reset_n(reset_n),
+//        .init(blake_init),
+//        .update(blake_update),
+//        .finish(blake_finish)
+//    )
+
+    // ===================== Control unit (FSM) =====================
+    
     always @(posedge clk) begin
         //set data if valid
-        if (valid_neotrng_output[0])
+        if (valid_neotrng_output[0]) begin
             neotrng_data[7:0] <= neotrng_data_wire[7:0];
-        else if (valid_neotrng_output[1])
+        end else if (valid_neotrng_output[1]) begin
             neotrng_data[15:8] <= neotrng_data_wire[15:8];
-        else if (valid_neotrng_output[2])
+        end else if (valid_neotrng_output[2]) begin
             neotrng_data[15:8] <= neotrng_data_wire[23:16];
         //hold data if invalid
-        else
+        end else begin
             neotrng_data <= neotrng_data;
+        end
     end
     
     
