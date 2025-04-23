@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -26,8 +26,8 @@ module fastclk_tb;
     reg clk;
     reg gpio;
     
-    wire [7:0] counter;
-    wire [7:0] hold;
+    wire [31:0] counter;
+    wire [31:0] hold;
 
     
     fastclk uut(reset,clk,gpio,counter,hold);
@@ -39,20 +39,18 @@ end
 initial begin
     reset = 1;
     clk = 0;
-    gpio = 0;
-    
-    #1 reset = 0;
-    
-    
-    # 10
     gpio = 1;
-    # 1
-    gpio = 0;
-    #4
-    gpio = 1;
-    #2
-    gpio = 0;
-    #3 $finish;
+    
+    #1 reset = 0;   // t=1
+        
+    #10 gpio = 0;   // t=11    
+    #1 gpio = 1;    // t=12    
+    #4 gpio = 0;    // t=16    
+    #2 gpio = 1;    // t=18    
+    #6 gpio = 0;    // t=24
+    #1 gpio = 1;    // t=25
+    
+    #3 $finish;     // t=28
     
 end
 endmodule
