@@ -52,7 +52,7 @@ module fastclk(
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             counter <= 32'h0000000;
-            counterHold <= 32'h00000000;   
+            data <= 32'h00000000;   
         end
         else if (~geiger_in_posedge)
             counter <= counter + 1'b1;
