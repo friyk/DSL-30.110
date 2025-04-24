@@ -29,16 +29,16 @@ module fastclk(
     input wire geiger_in,
     
     // This is the raw counter itself, which counts up sequentially until a geiger pulse resets it
-    output reg [31:0] counter,
+    output reg [7:0] counter,
     // This output holds the previous value until it changes due to a geiger pulse
-    output reg [31:0] data,
+    output reg [7:0] data,
     // This output shows whether fastclk is ready to provide a new piece of random data. This will only stay high for 1 clk
     output reg ready
 );
 
     // Rising edge detector for geiger_in so it prevents holding the counter for excessive periods of time
     wire geiger_in_posedge;
-    pos_edge_det(
+    pos_edge_det uut_0(
         .sig(geiger_in),
         .clk(clk),
         .pe(geiger_in_posedge)
@@ -53,8 +53,8 @@ module fastclk(
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            counter <= 32'h0000000;
-            data <= 32'h00000000; 
+            counter <= 8'h00;
+            data <= 8'h00; 
             ready <= 0;  
         end
         else if (~geiger_in_posedge) begin
@@ -63,7 +63,7 @@ module fastclk(
         end
         else if (geiger_in_posedge) begin
             data <= counter;
-            counter <= 32'h00000000;
+            counter <= 8'h00;
             ready <= 1;
         end
     end
