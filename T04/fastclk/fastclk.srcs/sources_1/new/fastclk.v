@@ -38,7 +38,7 @@ module fastclk(
 
     // Rising edge detector for geiger_in so it prevents holding the counter for excessive periods of time
     wire geiger_in_posedge;
-    pos_edge_det(
+    pos_edge_det uut_0(
         .sig(geiger_in),
         .clk(clk),
         .pe(geiger_in_posedge)

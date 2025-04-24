@@ -1,7 +1,7 @@
 # compile verilog/system verilog design source files
 verilog xil_defaultlib  \
 "../../../../fastclk.srcs/sources_1/new/fastclk.v" \
-"../../../../fastclk.srcs/sources_1/new/neg_edge_det.v" \
+"../../../../fastclk.srcs/sources_1/new/pos_edge_det.v" \
 "../../../../fastclk.srcs/sim_1/new/fastclk_tb.v" \
 
 # compile glbl module

@@ -28,9 +28,9 @@ module fastclk_tb;
     
     wire [31:0] counter;
     wire [31:0] hold;
-
+    wire ready;
     
-    fastclk uut(reset,clk,gpio,counter,hold);
+    fastclk uut(reset,clk,gpio,counter,hold,ready);
 
 always begin
     #1 clk = ~clk;
