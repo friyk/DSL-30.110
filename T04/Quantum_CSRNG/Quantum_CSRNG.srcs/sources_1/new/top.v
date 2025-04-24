@@ -42,7 +42,6 @@ module top (
     // ===================== Unified Reset Signal =====================
     wire [1:0] db_btn;
     wire reset_n; // Active LOW reset
-    wire debug_clk; // Debug clock that uses button press
     debouncer #(
         .WIDTH(2),
         .CLOCKS(1024),
@@ -105,28 +104,29 @@ module top (
     
     // ===================== Blake2s hash algorithm core =====================
     
-    // wire blake_init;
-    // wire blake_update;
-    // wire blake_finish;
-    // reg [511:0] blake_blockdata = 512'h0;
-    // wire [255:0] blake_output;
-    // wire blake_ready;
+    reg blake_init_reg = 0;
+    reg blake_update_reg = 0;
+    reg blake_finish_reg = 0;
+    reg [511:0] blake_blockdata = 512'h0;
+    reg [511:0] blake_blockdata_bitmask = 512'h00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_000000ff;
+    wire [255:0] blake_output;
+    wire blake_ready;
     
-    // blake2s_core blakecore(
-    //     .clk(clk),
-    //     .reset_n(reset_n),
+    blake2s_core blakecore(
+        .clk(clk),
+        .reset_n(reset_n),
 
-    //     // Control signals
-    //     .init(blake_init),
-    //     .update(blake_update),
-    //     .finish(blake_finish),
+        // Control signals
+        .init(blake_init_reg),
+        .update(blake_update_reg),
+        .finish(blake_finish_reg),
 
-    //     // Outputs
-    //     .block(blake_blockdata),
-    //     .blocklen(7'h40),
-    //     .digest(blake_output),
-    //     .ready(blake_ready)
-    // );
+        // Outputs
+        .block(blake_blockdata),
+        .blocklen(7'h40),
+        .digest(blake_output),
+        .ready(blake_ready)
+    );
 
     // ===================== Serial module =====================
     reg uart_send = 0;
@@ -160,19 +160,23 @@ module top (
 
     // ===================== Control unit (FSM) =====================
 
-    parameter FSM_IDLE          = 4'h0;
+    parameter FSM_IDLE          = 4'd0;
     // Seed states are meant to be states that feed the FIFO data to output (demo mode)
-    parameter FSM_SEED0         = 4'h1;
-    parameter FSM_SEED1         = 4'h2;
+    parameter FSM_SEED0         = 4'd1;
+    parameter FSM_SEED1         = 4'd2;
     // Output states are when data is being fed out of the FIFO to the BLAKE2s hash function
-    parameter FSM_OUTPUT0       = 4'h6;
+    parameter FSM_OUTPUT0       = 4'd6;
+    parameter FSM_OUTPUT1       = 4'd7;
+    parameter FSM_OUTPUT2       = 4'd8;
+    parameter FSM_OUTPUT3       = 4'd9;
 
     parameter FSM_DEBUG         = 4'hf;
 
     reg [3:0] fsm_state_reg = FSM_IDLE;
     reg [3:0] fsm_current_state = FSM_IDLE;
     reg toPrintDebug = DEBUG_ENABLED;
-    reg [5:0] output_counter = 0; // This counter determines which bytes of data are being committed. Range 0-63, and it should empty the FIFO
+
+    reg [9:0] output_count_1 = 0; // This counter determines which bytes of data are being committed. 0 -> 8 -> 16 -> ... -> 504. This will apply a shift left
 
     always @(posedge clk or negedge reset_n) begin
         // Reset State
@@ -193,22 +197,19 @@ module top (
                     uart_send <= 0;
                     fsm_state_reg <= fsm_state_reg;
 
-                    // if (toPrintDebug) begin
-                    //     fsm_current_state <= FSM_IDLE;
-                    //     fsm_state_reg <= FSM_DEBUG;
-                    // end else 
+                    // SKIP debug stub here, will cause too many messages!
                     if (fastclk_ready) begin
                         toPrintDebug <= DEBUG_ENABLED;
                         fsm_state_reg <= FSM_SEED1;
                     end else if (valid_neotrng_output) begin
                         toPrintDebug <= DEBUG_ENABLED;
                         fsm_state_reg <= FSM_SEED0;
+                    end else if (fifo_full) begin
+                        // Output to BLAKE2s once FIFO is full
+                        // ideally, we want to deplete the FIFO
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_OUTPUT0;
                     end
-                    // end else if (fifo_full) begin
-                    //     // Output to BLAKE2s once FIFO is full
-                    //     toPrintDebug <= DEBUG_ENABLED;
-                    //     fsm_state_reg <= FSM_OUTPUT0;
-                    // end
                 end
 
                 FSM_SEED0: begin
@@ -217,10 +218,7 @@ module top (
                     fifo_in_reg <= neotrng_data_wire;
                     uart_send <= 0;
 
-                    // if (toPrintDebug) begin
-                    //     fsm_current_state <= FSM_SEED0;
-                    //     fsm_state_reg <= FSM_DEBUG;
-                    // end else 
+                    // SKIP debug stub here, will cause too many messages!
                     if (fastclk_ready) begin
                         // During the neoTRNG based seeding, do another validation pass 
                         // with the fastclk just to be sure we ingest the data coming 
@@ -248,18 +246,84 @@ module top (
                     end
                 end
 
-                // FSM_OUTPUT0: begin
-                //     fifo_re_reg <= 0;
-                //     fifo_we_reg <= 0;
-                //     fifo_in_reg <= 8'h00;
-                //     uart_send <= 0;
+                FSM_OUTPUT0: begin        // Initial output, set initial conditions including initial addresses
+                    fifo_re_reg <= 1;
+                    fifo_we_reg <= 0;
+                    fifo_in_reg <= 8'h00;
+                    uart_send <= 0;
 
+                    output_count_1 <= 0;
 
+                    blake_blockdata_bitmask <= 512'h00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_000000ff;
+                    blake_blockdata = (blake_blockdata & (~blake_blockdata_bitmask)) | (fifo_out << output_count_1);
 
-                // end
+                    if (toPrintDebug) begin
+                        fsm_current_state <= FSM_OUTPUT0;
+                        fsm_state_reg <= FSM_DEBUG;
+                    end else begin
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_OUTPUT1;
+                    end
+                end
+
+                FSM_OUTPUT1: begin      // Intermediate output, increment the address and check if the address has overflowed. Do not read or write anything yet!
+                    fifo_re_reg <= 0;
+                    fifo_we_reg <= 0;
+                    fifo_in_reg <= 8'h00;
+                    uart_send <= 0;
+
+                    blake_blockdata_bitmask <= blake_blockdata_bitmask << 8;
+                    output_count_1 <= output_count_1 + 8;
+
+                    // SKIP debug stub here, will cause double increment!
+                    if (output_count_1 >= 505) begin
+                        // goto finish state
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_OUTPUT3;
+                    end else begin
+                        // goto store state
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_OUTPUT2;
+                    end
+                end
+
+                FSM_OUTPUT2: begin      // Store this number into the block register
+                    fifo_re_reg <= 1;
+                    fifo_we_reg <= 0;
+                    fifo_in_reg <= 8'h00;
+                    uart_send <= 0;
+
+                    blake_blockdata = (blake_blockdata & (~blake_blockdata_bitmask)) | (fifo_out << output_count_1);
+
+                    // go back to intermediate state
+                    if (toPrintDebug) begin
+                        fsm_current_state <= FSM_OUTPUT2;
+                        fsm_state_reg <= FSM_DEBUG;
+                    end else begin
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_OUTPUT1;
+                    end
+                end
+
+                FSM_OUTPUT3: begin      // Finish state, no need to store the last byte, and activate the Blake2 core!
+                    fifo_re_reg <= 1;
+                    fifo_we_reg <= 0;
+                    fifo_in_reg <= 8'h00;
+                    uart_send <= 0;
+
+                    if (toPrintDebug) begin
+                        fsm_current_state <= FSM_OUTPUT3;
+                        fsm_state_reg <= FSM_DEBUG;
+                    end else begin
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_IDLE;
+                    end
+                end
 
                 FSM_DEBUG: begin
                     toPrintDebug <= 0;
+                    fifo_re_reg <= 0;
+                    fifo_we_reg <= 0;
                     if (uart_ready) begin
                         uart_send <= 1;
                         uart_data <= fsm_current_state;
