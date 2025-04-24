@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2023.2 (win64) Build 4029153 Fri Oct 13 20:14:34 MDT 2023
-| Date         : Thu Apr 24 15:27:11 2025
+| Date         : Thu Apr 24 17:00:37 2025
 | Host         : DELTAV-PC running 64-bit major release  (build 9200)
 | Command      : report_clock_utilization -file top_clock_utilization_routed.rpt
 | Design       : top
@@ -22,7 +22,6 @@ Table of Contents
 6. Clock Regions : Global Clock Summary
 7. Device Cell Placement Summary for Global Clock g0
 8. Clock Region Cell Placement per Global Clock: Region X0Y1
-9. Clock Region Cell Placement per Global Clock: Region X0Y2
 
 1. Clock Primitive Utilization
 ------------------------------
@@ -46,7 +45,7 @@ Table of Contents
 +-----------+-----------+-----------------+------------+---------------+--------------+-------------------+-------------+-----------------+--------------+-------------+----------------------+---------------+
 | Global Id | Source Id | Driver Type/Pin | Constraint | Site          | Clock Region | Load Clock Region | Clock Loads | Non-Clock Loads | Clock Period | Clock       | Driver Pin           | Net           |
 +-----------+-----------+-----------------+------------+---------------+--------------+-------------------+-------------+-----------------+--------------+-------------+----------------------+---------------+
-| g0        | src0      | BUFG/O          | None       | BUFGCTRL_X0Y0 | n/a          |                 2 |         136 |               0 |       83.330 | sys_clk_pin | clk_IBUF_BUFG_inst/O | clk_IBUF_BUFG |
+| g0        | src0      | BUFG/O          | None       | BUFGCTRL_X0Y0 | n/a          |                 1 |         158 |               0 |       83.330 | sys_clk_pin | clk_IBUF_BUFG_inst/O | clk_IBUF_BUFG |
 +-----------+-----------+-----------------+------------+---------------+--------------+-------------------+-------------+-----------------+--------------+-------------+----------------------+---------------+
 * Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 ** Non-Clock Loads column represents cell count of non-clock pin loads
@@ -67,31 +66,31 @@ Table of Contents
 4. Local Clock Details
 ----------------------
 
-+----------+-----------------+------------+-------------------+--------------+-------------+-----------------+--------------+-------+--------------------------------------------------------------+--------------------------------------------------------------+
-| Local Id | Driver Type/Pin | Constraint | Site/BEL          | Clock Region | Clock Loads | Non-Clock Loads | Clock Period | Clock | Driver Pin                                                   | Net                                                          |
-+----------+-----------------+------------+-------------------+--------------+-------------+-----------------+--------------+-------+--------------------------------------------------------------+--------------------------------------------------------------+
-| 0        | FDCE/Q          | None       | SLICE_X5Y100/A5FF | X0Y2         |           1 |               2 |              |       | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[4]/Q | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/Q[0]          |
-| 1        | FDCE/Q          | None       | SLICE_X5Y100/AFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[0]/Q | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[0]       |
-| 2        | FDCE/Q          | None       | SLICE_X5Y100/BFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[1]/Q | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[1]       |
-| 3        | FDCE/Q          | None       | SLICE_X5Y100/CFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[2]/Q | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[2]       |
-| 4        | FDCE/Q          | None       | SLICE_X5Y100/DFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[3]/Q | neotrng1/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[3]       |
-| 5        | FDCE/Q          | None       | SLICE_X3Y102/A5FF | X0Y2         |           1 |               2 |              |       | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[6]/Q | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/Q[0]          |
-| 6        | FDCE/Q          | None       | SLICE_X5Y102/A5FF | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[0]/Q | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[0]       |
-| 7        | FDCE/Q          | None       | SLICE_X5Y102/BFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[1]/Q | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[1]       |
-| 8        | FDCE/Q          | None       | SLICE_X3Y102/AFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[2]/Q | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[2]       |
-| 9        | FDCE/Q          | None       | SLICE_X3Y102/BFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[3]/Q | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[3]       |
-| 10       | FDCE/Q          | None       | SLICE_X3Y102/CFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[4]/Q | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[4]       |
-| 11       | FDCE/Q          | None       | SLICE_X3Y102/DFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[5]/Q | neotrng1/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[5]       |
-| 12       | FDCE/Q          | None       | SLICE_X3Y100/D5FF | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[8]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/cell_en_out_2 |
-| 13       | FDCE/Q          | None       | SLICE_X3Y101/B5FF | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[0]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[0]       |
-| 14       | FDCE/Q          | None       | SLICE_X3Y100/AFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[1]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[1]       |
-| 15       | FDCE/Q          | None       | SLICE_X3Y100/BFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[2]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[2]       |
-| 16       | FDCE/Q          | None       | SLICE_X3Y100/CFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[3]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[3]       |
-| 17       | FDCE/Q          | None       | SLICE_X3Y100/DFF  | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[4]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[4]       |
-| 18       | FDCE/Q          | None       | SLICE_X3Y100/A5FF | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[5]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[5]       |
-| 19       | FDCE/Q          | None       | SLICE_X3Y100/B5FF | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[6]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[6]       |
-| 20       | FDCE/Q          | None       | SLICE_X3Y100/C5FF | X0Y2         |           1 |               1 |              |       | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[7]/Q | neotrng1/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[7]       |
-+----------+-----------------+------------+-------------------+--------------+-------------+-----------------+--------------+-------+--------------------------------------------------------------+--------------------------------------------------------------+
++----------+-----------------+------------+------------------+--------------+-------------+-----------------+--------------+-------+-------------------------------------------------------------+-------------------------------------------------------------+
+| Local Id | Driver Type/Pin | Constraint | Site/BEL         | Clock Region | Clock Loads | Non-Clock Loads | Clock Period | Clock | Driver Pin                                                  | Net                                                         |
++----------+-----------------+------------+------------------+--------------+-------------+-----------------+--------------+-------+-------------------------------------------------------------+-------------------------------------------------------------+
+| 0        | FDCE/Q          | None       | SLICE_X6Y73/AFF  | X0Y1         |           1 |               2 |              |       | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[4]/Q | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/Q[0]          |
+| 1        | FDCE/Q          | None       | SLICE_X7Y76/A5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[0]/Q | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[0]       |
+| 2        | FDCE/Q          | None       | SLICE_X7Y76/B5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[1]/Q | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[1]       |
+| 3        | FDCE/Q          | None       | SLICE_X7Y76/C5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[2]/Q | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[2]       |
+| 4        | FDCE/Q          | None       | SLICE_X7Y76/DFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg_reg[3]/Q | neotrng/entropy_cell_gen[0].neoTRNG_cell_inst/sreg[3]       |
+| 5        | FDCE/Q          | None       | SLICE_X6Y73/D5FF | X0Y1         |           1 |               2 |              |       | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[6]/Q | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/Q[0]          |
+| 6        | FDCE/Q          | None       | SLICE_X6Y73/BFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[0]/Q | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[0]       |
+| 7        | FDCE/Q          | None       | SLICE_X6Y73/CFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[1]/Q | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[1]       |
+| 8        | FDCE/Q          | None       | SLICE_X6Y73/DFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[2]/Q | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[2]       |
+| 9        | FDCE/Q          | None       | SLICE_X6Y73/A5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[3]/Q | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[3]       |
+| 10       | FDCE/Q          | None       | SLICE_X6Y73/B5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[4]/Q | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[4]       |
+| 11       | FDCE/Q          | None       | SLICE_X6Y73/C5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg_reg[5]/Q | neotrng/entropy_cell_gen[1].neoTRNG_cell_inst/sreg[5]       |
+| 12       | FDCE/Q          | None       | SLICE_X4Y74/C5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[8]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/cell_en_out_2 |
+| 13       | FDCE/Q          | None       | SLICE_X5Y74/CFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[0]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[0]       |
+| 14       | FDCE/Q          | None       | SLICE_X5Y74/DFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[1]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[1]       |
+| 15       | FDCE/Q          | None       | SLICE_X4Y74/AFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[2]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[2]       |
+| 16       | FDCE/Q          | None       | SLICE_X4Y74/BFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[3]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[3]       |
+| 17       | FDCE/Q          | None       | SLICE_X4Y74/CFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[4]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[4]       |
+| 18       | FDCE/Q          | None       | SLICE_X4Y74/DFF  | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[5]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[5]       |
+| 19       | FDCE/Q          | None       | SLICE_X4Y74/A5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[6]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[6]       |
+| 20       | FDCE/Q          | None       | SLICE_X4Y74/B5FF | X0Y1         |           1 |               1 |              |       | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg_reg[7]/Q | neotrng/entropy_cell_gen[2].neoTRNG_cell_inst/sreg[7]       |
++----------+-----------------+------------+------------------+--------------+-------------+-----------------+--------------+-------+-------------------------------------------------------------+-------------------------------------------------------------+
 * Local Clocks in this context represents only clocks driven by non-global buffers
 ** Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 *** Non-Clock Loads column represents cell count of non-clock pin loads
@@ -107,9 +106,9 @@ Table of Contents
 +-------------------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+
 | X0Y0              |    0 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |    0 |  1200 |    0 |   400 |    0 |    20 |    0 |    10 |    0 |    20 |
 | X1Y0              |    0 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |    0 |  1500 |    0 |   450 |    0 |    40 |    0 |    20 |    0 |    20 |
-| X0Y1              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |   21 |  1200 |    6 |   400 |    0 |    20 |    0 |    10 |    0 |    20 |
+| X0Y1              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |  156 |  1200 |   74 |   400 |    0 |    20 |    0 |    10 |    0 |    20 |
 | X1Y1              |    0 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |    0 |  1500 |    0 |   450 |    0 |    40 |    0 |    20 |    0 |    20 |
-| X0Y2              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |  113 |  1800 |   47 |   400 |    0 |    20 |    0 |    10 |    0 |    20 |
+| X0Y2              |    0 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |    0 |  1800 |    0 |   400 |    0 |    20 |    0 |    10 |    0 |    20 |
 | X1Y2              |    0 |    12 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     4 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |   950 |    0 |   300 |    0 |    10 |    0 |     5 |    0 |    20 |
 +-------------------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+
 * Global Clock column represents track count; while other columns represents cell counts
@@ -134,7 +133,7 @@ All Modules
 +-----------+-----------------+-------------------+-------------+-------------+----------------+-------------+----------+----------------+----------+---------------+
 | Global Id | Driver Type/Pin | Driver Region (D) | Clock       | Period (ns) | Waveform (ns)  | Slice Loads | IO Loads | Clocking Loads | GT Loads | Net           |
 +-----------+-----------------+-------------------+-------------+-------------+----------------+-------------+----------+----------------+----------+---------------+
-| g0        | BUFG/O          | n/a               | sys_clk_pin |      83.330 | {0.000 41.660} |         136 |        0 |              0 |        0 | clk_IBUF_BUFG |
+| g0        | BUFG/O          | n/a               | sys_clk_pin |      83.330 | {0.000 41.660} |         158 |        0 |              0 |        0 | clk_IBUF_BUFG |
 +-----------+-----------------+-------------------+-------------+-------------+----------------+-------------+----------+----------------+----------+---------------+
 * Slice Loads column represents load cell count of all cell types other than IO, GT and clock resources
 ** IO Loads column represents load cell count of IO types
@@ -145,8 +144,8 @@ All Modules
 +----+------+----+-----------------------+
 |    | X0   | X1 | HORIZONTAL PROG DELAY |
 +----+------+----+-----------------------+
-| Y2 |  115 |  0 |                     0 |
-| Y1 |   21 |  0 |                     0 |
+| Y2 |    0 |  0 |                     - |
+| Y1 |  158 |  0 |                     0 |
 | Y0 |    0 |  0 |                     - |
 +----+------+----+-----------------------+
 
@@ -154,23 +153,10 @@ All Modules
 8. Clock Region Cell Placement per Global Clock: Region X0Y1
 ------------------------------------------------------------
 
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+---------------+
-| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net           |
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+---------------+
-| g0        | n/a   | BUFG/O          | None       |          21 |               0 | 21 |           0 |    0 |   0 |  0 |    0 |   0 |       0 | clk_IBUF_BUFG |
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+---------------+
-* Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
-** Non-Clock Loads column represents cell count of non-clock pin loads
-*** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
-
-
-9. Clock Region Cell Placement per Global Clock: Region X0Y2
-------------------------------------------------------------
-
 +-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+---------------+
 | Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF  | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net           |
 +-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+---------------+
-| g0        | n/a   | BUFG/O          | None       |         115 |               0 | 113 |           1 |    0 |   0 |  0 |    0 |   0 |       0 | clk_IBUF_BUFG |
+| g0        | n/a   | BUFG/O          | None       |         158 |               0 | 156 |           1 |    0 |   0 |  0 |    0 |   0 |       0 | clk_IBUF_BUFG |
 +-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+---------------+
 * Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 ** Non-Clock Loads column represents cell count of non-clock pin loads
@@ -190,5 +176,5 @@ set_property LOC IOB_X0Y26 [get_ports clk]
 #startgroup
 create_pblock {CLKAG_clk_IBUF_BUFG}
 add_cells_to_pblock [get_pblocks  {CLKAG_clk_IBUF_BUFG}] [get_cells -filter { PRIMITIVE_GROUP != I/O && IS_PRIMITIVE==1 && PRIMITIVE_LEVEL !=INTERNAL } -of_object [get_pins -filter {DIRECTION==IN} -of_objects [get_nets -hierarchical -filter {PARENT=="clk_IBUF_BUFG"}]]]
-resize_pblock [get_pblocks {CLKAG_clk_IBUF_BUFG}] -add {CLOCKREGION_X0Y1:CLOCKREGION_X0Y1 CLOCKREGION_X0Y2:CLOCKREGION_X0Y2}
+resize_pblock [get_pblocks {CLKAG_clk_IBUF_BUFG}] -add {CLOCKREGION_X0Y1:CLOCKREGION_X0Y1}
 #endgroup

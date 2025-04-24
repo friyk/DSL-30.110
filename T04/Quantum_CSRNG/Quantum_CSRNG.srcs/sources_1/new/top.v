@@ -77,15 +77,26 @@ module top (
     );
     
     // ===================== neoTRNG modules =====================
-    wire [3:0] valid_neotrng_output;
-    wire [31:0] neotrng_data_wire;
-    reg [31:0] neotrng_data = 32'h00000000;
-    neoTRNG neotrng1 (
+    wire valid_neotrng_output;
+    wire [7:0] neotrng_data_wire;
+    neoTRNG neotrng (
         .clk_i(clk),
         .rstn_i(reset_n),
-        .enable_i(1),
-        .valid_o(valid_neotrng_output[0]),
-        .data_o(neotrng_data_wire[7:0])
+        .enable_i(1),           // TODO: you can disable or enable neoTRNG here for debugging purposes
+        .valid_o(valid_neotrng_output),
+        .data_o(neotrng_data_wire)
+    );
+
+    // ===================== FastClk Nuclear Decay detector =====================
+    wire fastclk_ready;
+    wire [7:0] fastclk_data_wire;
+    fastclk fastclk(
+        .rst(~reset_n),
+        .clk(clk),
+        .geiger_in(pio1),
+
+        .data(fastclk_data_wire),
+        .ready(fastclk_ready)
     );
     
     // ===================== Blake2s hash algorithm core =====================
@@ -124,7 +135,7 @@ module top (
         end else begin
             if (valid_neotrng_output[0]) begin
                 uart_send <= 1;
-                uart_data <= neotrng_data[7:0];
+                uart_data <= neotrng_data_reg[7:0];
             end else begin
                 uart_send <= 0;
                 uart_data <= 8'h20;
@@ -174,7 +185,10 @@ module top (
                     if (toPrintDebug) begin
                         fsm_current_state <= FSM_IDLE;
                         fsm_state_reg <= FSM_DEBUG;
-                    end else if (valid_neotrng_output[0]) begin
+                    end else if (fastclk_ready) begin
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_SEED1;
+                    end else if (valid_neotrng_output) begin
                         toPrintDebug <= DEBUG_ENABLED;
                         fsm_state_reg <= FSM_SEED0;
                     end
@@ -183,11 +197,26 @@ module top (
                 FSM_SEED0: begin
                     fifo_re_reg <= 0;
                     fifo_we_reg <= 1;
-                    fifo_in_reg <= neotrng_data_wire[7:0];
+                    fifo_in_reg <= neotrng_data_wire;
                     uart_send <= 0;
 
                     if (toPrintDebug) begin
                         fsm_current_state <= FSM_SEED0;
+                        fsm_state_reg <= FSM_DEBUG;
+                    end else begin
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_IDLE;
+                    end
+                end
+
+                FSM_SEED1: begin
+                    fifo_re_reg <= 0;
+                    fifo_we_reg <= 1;
+                    fifo_in_reg <= fastclk_data_wire;
+                    uart_send <= 0;
+
+                    if (toPrintDebug) begin
+                        fsm_current_state <= FSM_SEED1;
                         fsm_state_reg <= FSM_DEBUG;
                     end else begin
                         toPrintDebug <= DEBUG_ENABLED;
