@@ -35,6 +35,10 @@ module top (
     // 2 Buttons, BTN0 for reset
     input wire [1:0] btn
 );
+    // ===================== Parameters =====================
+    // Please modify these parameters before synthesis!
+    parameter DEBUG_ENABLED = 1; // Enables serial debug output
+
     // ===================== Unified Reset Signal =====================
     wire [1:0] db_btn;
     wire reset_n; // Active LOW reset
@@ -77,30 +81,52 @@ module top (
     );
     
     // ===================== neoTRNG modules =====================
-    wire [3:0] valid_neotrng_output;
-    wire [31:0] neotrng_data_wire;
-    reg [31:0] neotrng_data = 32'h00000000;
-    neoTRNG neotrng1 (
+    wire valid_neotrng_output;
+    wire [7:0] neotrng_data_wire;
+    neoTRNG neotrng (
         .clk_i(clk),
         .rstn_i(reset_n),
-        .enable_i(1),
-        .valid_o(valid_neotrng_output[0]),
-        .data_o(neotrng_data_wire[7:0])
+        .enable_i(1),           // TODO: you can disable or enable neoTRNG here for debugging purposes
+        .valid_o(valid_neotrng_output),
+        .data_o(neotrng_data_wire)
+    );
+
+    // ===================== FastClk Nuclear Decay detector =====================
+    wire fastclk_ready;
+    wire [7:0] fastclk_data_wire;
+    fastclk fastclk(
+        .rst(~reset_n),
+        .clk(clk),
+        .geiger_in(pio1),
+
+        .data(fastclk_data_wire),
+        .ready(fastclk_ready)
     );
     
     // ===================== Blake2s hash algorithm core =====================
     
-    wire blake_init;
-    wire blake_update;
-    wire blake_finish;
+    // wire blake_init;
+    // wire blake_update;
+    // wire blake_finish;
+    // reg [511:0] blake_blockdata = 512'h0;
+    // wire [255:0] blake_output;
+    // wire blake_ready;
     
-    blake2s_core blakecore(
-        .clk(clk),
-        .reset_n(reset_n),
-        .init(blake_init),
-        .update(blake_update),
-        .finish(blake_finish)
-    );
+    // blake2s_core blakecore(
+    //     .clk(clk),
+    //     .reset_n(reset_n),
+
+    //     // Control signals
+    //     .init(blake_init),
+    //     .update(blake_update),
+    //     .finish(blake_finish),
+
+    //     // Outputs
+    //     .block(blake_blockdata),
+    //     .blocklen(7'h40),
+    //     .digest(blake_output),
+    //     .ready(blake_ready)
+    // );
 
     // ===================== Serial module =====================
     reg uart_send = 0;
@@ -124,7 +150,7 @@ module top (
         end else begin
             if (valid_neotrng_output[0]) begin
                 uart_send <= 1;
-                uart_data <= neotrng_data[7:0];
+                uart_data <= neotrng_data_reg[7:0];
             end else begin
                 uart_send <= 0;
                 uart_data <= 8'h20;
@@ -138,21 +164,17 @@ module top (
     // Seed states are meant to be states that feed the FIFO data to output (demo mode)
     parameter FSM_SEED0         = 4'h1;
     parameter FSM_SEED1         = 4'h2;
-    parameter FSM_SEED2         = 4'h3;
-    parameter FSM_SEED3         = 4'h4;
-    parameter FSM_WRITE_FIFO    = 4'h5;
-    // Output states are when data is being fed out of the FIFO to the serial device
+    // Output states are when data is being fed out of the FIFO to the BLAKE2s hash function
     parameter FSM_OUTPUT0       = 4'h6;
 
     parameter FSM_DEBUG         = 4'hf;
-    parameter DEBUG_ENABLED     = 1'b1;
 
     reg [3:0] fsm_state_reg = FSM_IDLE;
     reg [3:0] fsm_current_state = FSM_IDLE;
     reg toPrintDebug = DEBUG_ENABLED;
+    reg [5:0] output_counter = 0; // This counter determines which bytes of data are being committed. Range 0-63, and it should empty the FIFO
 
     always @(posedge clk or negedge reset_n) begin
-
         // Reset State
         if (!reset_n) begin
             fifo_re_reg <= 0;
@@ -171,29 +193,70 @@ module top (
                     uart_send <= 0;
                     fsm_state_reg <= fsm_state_reg;
 
-                    if (toPrintDebug) begin
-                        fsm_current_state <= FSM_IDLE;
-                        fsm_state_reg <= FSM_DEBUG;
-                    end else if (valid_neotrng_output[0]) begin
+                    // if (toPrintDebug) begin
+                    //     fsm_current_state <= FSM_IDLE;
+                    //     fsm_state_reg <= FSM_DEBUG;
+                    // end else 
+                    if (fastclk_ready) begin
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_SEED1;
+                    end else if (valid_neotrng_output) begin
                         toPrintDebug <= DEBUG_ENABLED;
                         fsm_state_reg <= FSM_SEED0;
                     end
+                    // end else if (fifo_full) begin
+                    //     // Output to BLAKE2s once FIFO is full
+                    //     toPrintDebug <= DEBUG_ENABLED;
+                    //     fsm_state_reg <= FSM_OUTPUT0;
+                    // end
                 end
 
                 FSM_SEED0: begin
                     fifo_re_reg <= 0;
                     fifo_we_reg <= 1;
-                    fifo_in_reg <= neotrng_data_wire[7:0];
+                    fifo_in_reg <= neotrng_data_wire;
+                    uart_send <= 0;
+
+                    // if (toPrintDebug) begin
+                    //     fsm_current_state <= FSM_SEED0;
+                    //     fsm_state_reg <= FSM_DEBUG;
+                    // end else 
+                    if (fastclk_ready) begin
+                        // During the neoTRNG based seeding, do another validation pass 
+                        // with the fastclk just to be sure we ingest the data coming 
+                        // from the geiger counter
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_SEED1;
+                    end else begin
+                        toPrintDebug <= DEBUG_ENABLED;
+                        fsm_state_reg <= FSM_IDLE;
+                    end
+                end
+
+                FSM_SEED1: begin
+                    fifo_re_reg <= 0;
+                    fifo_we_reg <= 1;
+                    fifo_in_reg <= fastclk_data_wire;
                     uart_send <= 0;
 
                     if (toPrintDebug) begin
-                        fsm_current_state <= FSM_SEED0;
+                        fsm_current_state <= FSM_SEED1;
                         fsm_state_reg <= FSM_DEBUG;
                     end else begin
                         toPrintDebug <= DEBUG_ENABLED;
                         fsm_state_reg <= FSM_IDLE;
                     end
                 end
+
+                // FSM_OUTPUT0: begin
+                //     fifo_re_reg <= 0;
+                //     fifo_we_reg <= 0;
+                //     fifo_in_reg <= 8'h00;
+                //     uart_send <= 0;
+
+
+
+                // end
 
                 FSM_DEBUG: begin
                     toPrintDebug <= 0;
@@ -210,18 +273,6 @@ module top (
             endcase
         end
 
-
-        /*//set data if valid
-        if (valid_neotrng_output[0]) begin
-            neotrng_data[7:0] <= neotrng_data_wire[7:0];
-        end else if (valid_neotrng_output[1]) begin
-            neotrng_data[15:8] <= neotrng_data_wire[15:8];
-        end else if (valid_neotrng_output[2]) begin
-            neotrng_data[23:16] <= neotrng_data_wire[23:16];
-        //hold data if invalid
-        end else begin
-            neotrng_data <= neotrng_data;
-        end*/
     end
     
 
