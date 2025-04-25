@@ -1,0 +1,16 @@
+0.7
+2020.2
+Oct 13 2023
+20:47:58
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.gen/sources_1/ip/serial_fifo/sim/serial_fifo.v,1745413561,verilog,,C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/imports/Downloads/blake2s_G.v,,serial_fifo,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.sim/sim_1/behav/xsim/glbl.v,1697210495,verilog,,,,glbl,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sim_1/new/test.v,1745562487,verilog,,,,fastclk_tb,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/imports/Downloads/blake2s_G.v,1745403155,verilog,,C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/imports/Downloads/blake2s_core.v,,blake2s_G,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/imports/Downloads/blake2s_core.v,1745403130,verilog,,C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/imports/Downloads/blake2s_m_select.v,,blake2s_core,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/imports/Downloads/blake2s_m_select.v,1745403123,verilog,,C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/debouncer.v,,blake2s_m_select,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/UART_TX_CTRL.vhd,1745554454,vhdl,,,,uart_tx_ctrl,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/debouncer.v,1745390032,verilog,,C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/fastclk.v,,debouncer,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/fastclk.v,1745482747,verilog,,C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/pos_edge_det.v,,fastclk,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/neoTRNG.vhd,1745391161,vhdl,,,,neotrng;neotrng_cell,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/pos_edge_det.v,1745402094,verilog,,C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/top.v,,pos_edge_det,,,,,,,,
+C:/Users/sammy/Documents/DSL/DSL-30.110/T04/Quantum_CSRNG/Quantum_CSRNG.srcs/sources_1/new/top.v,1745561943,verilog,,,,top,,,,,,,,
